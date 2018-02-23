@@ -22,7 +22,7 @@ func Client() *Robinhood {
 		rh = &Robinhood{}
 		rh.request = func(req *fasthttp.Request, resp *fasthttp.Response) {
 			if len(rh.token) > 0 {
-				req.Header.Set("Authorization", rh.token)
+				req.Header.Set("Authorization", "Token "+rh.token)
 			}
 			req.Header.SetContentType("application/json")
 			req.Header.Set("Accept", "application/json")

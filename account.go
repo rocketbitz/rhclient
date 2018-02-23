@@ -70,7 +70,7 @@ type AccountResponse struct {
 }
 
 func (rh *Robinhood) GetAccounts() ([]Account, error) {
-	uri := fmt.Sprintf("%v/accounts", baseURL)
+	uri := fmt.Sprintf("%v/accounts/", baseURL)
 	resp, err := rh.get(uri)
 	if err != nil {
 		return nil, err

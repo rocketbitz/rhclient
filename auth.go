@@ -2,6 +2,7 @@ package rhclient
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 )
 
@@ -18,6 +19,9 @@ func (rh *Robinhood) Login(username, password string) error {
 	m = map[string]interface{}{}
 	if err = json.Unmarshal(resp.Body(), &m); err != nil {
 		return err
+	}
+	if m["token"] == nil {
+		return errors.New(string(resp.Body()))
 	}
 	rh.token = m["token"].(string)
 	return nil

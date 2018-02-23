@@ -40,7 +40,7 @@ func (rh *Robinhood) GetFundamental(symbol string) (*Fundamental, error) {
 
 func (rh *Robinhood) GetFundamentals(symbols []string) ([]Fundamental, error) {
 	uri := fmt.Sprintf("%v/fundamentals?symbols=%v", baseURL, strings.Join(symbols, ","))
-	resp, err := rh.get(url)
+	resp, err := rh.get(uri)
 	if err != nil {
 		return nil, err
 	}
@@ -48,5 +48,5 @@ func (rh *Robinhood) GetFundamentals(symbols []string) ([]Fundamental, error) {
 	if err := json.Unmarshal(resp.Body(), &fResp); err != nil {
 		return nil, err
 	}
-	return &fResp, nil
+	return fResp.Results, nil
 }

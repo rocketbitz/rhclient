@@ -61,49 +61,50 @@ const (
 )
 
 type RHOrderResponse struct {
-	ID                     string          `json:"id"`
-	Executions             []string        `json:"executions"`
-	Fees                   decimal.Decimal `json:"fees"`
-	Cancel                 string          `json:"cancel"`
-	CumulativeQuantity     decimal.Decimal `json:"cumulative_quantity"`
-	RejectReason           string          `json:"reject_reason"`
-	State                  OrderState      `json:"state"`
+	ID                     string           `json:"id"`
+	Executions             []string         `json:"executions"`
+	Fees                   decimal.Decimal  `json:"fees"`
+	Cancel                 string           `json:"cancel"`
+	CumulativeQuantity     decimal.Decimal  `json:"cumulative_quantity"`
+	RejectReason           string           `json:"reject_reason"`
+	State                  OrderState       `json:"state"`
 	ClientID               *string          `json:"client_id"`
-	URL                    string          `json:"url"`
-	Position               string          `json:"position"`
+	URL                    string           `json:"url"`
+	Position               string           `json:"position"`
 	AveragePrice           *decimal.Decimal `json:"average_price"`
-	ExtendedHours          bool            `json:"extended_hours"`
-	OverrideDayTradeChecks bool            `json:"override_day_trade_checks"`
-	OverrideDTBPChecks     bool            `json:"override_dtbp_checks"`
-	UpdatedAt              time.Time       `json:"updated_at"`
-	CreatedAt              time.Time       `json:"created_at"`
-	LastTranscationAt      time.Time       `json:"last_transaction_at"`
+	ExtendedHours          bool             `json:"extended_hours"`
+	OverrideDayTradeChecks bool             `json:"override_day_trade_checks"`
+	OverrideDTBPChecks     bool             `json:"override_dtbp_checks"`
+	UpdatedAt              time.Time        `json:"updated_at"`
+	CreatedAt              time.Time        `json:"created_at"`
+	LastTranscationAt      time.Time        `json:"last_transaction_at"`
 }
 
-func (o *RHOrderResponse) fromMap(m map[string]interface{}) error {
+func (o *RHOrderResponse) fromMap(m map[string]interface{}) (err error) {
 	o.ID = m["id"].(string)
 	o.Executions = m["executions"].([]string)
 	if fees, err := decimal.NewFromString(m["fees"].(string)); err != nil {
-		return nil, err
+		return err
 	} else {
 		o.Fees = fees
 	}
 	o.Cancel = m["cancel"].(string)
 	if cumQty, err := decimal.NewFromString(m["cumulative_quantity"].(string)); err != nil {
-		return nil, err
+		return err
 	} else {
 		o.CumulativeQuantity = cumQty
 	}
 	o.RejectReason = m["reject_reason"].(string)
 	o.State = OrderState(m["state"].(string))
 	if m["client_id"] != nil {
-		o.ClientID = m["client_id"].(string)
+		clientID := m["client_id"].(string)
+		o.ClientID = &clientID
 	}
 	o.URL = m["url"].(string)
 	o.Position = m["position"].(string)
 	if m["average_price"] != nil {
 		if avgPx, err := decimal.NewFromString(m["average_price"].(string)); err != nil {
-			return nil, err
+			return err
 		} else {
 			o.AveragePrice = &avgPx
 		}
@@ -111,7 +112,8 @@ func (o *RHOrderResponse) fromMap(m map[string]interface{}) error {
 	o.ExtendedHours = m["extended_hours"].(bool)
 	o.OverrideDayTradeChecks = m["override_day_trade_checks"].(bool)
 	o.OverrideDTBPChecks = m["override_dtbp_checks"].(bool)
-	o.UpdatedAt, err = time.Parse(time.RFC3339)
+	// o.UpdatedAt, err = time.Parse(time.RFC3339, )
+	return err
 }
 
 func (rh *Robinhood) Order(o RHOrder) (*RHOrderResponse, error) {
@@ -146,16 +148,15 @@ type RHOrderQuery struct {
 	Cursor     string     `json:"cursor,omitempty"`
 }
 
-func (rh *Robinhood) ListOrders(q RHOrderQuery) ([]RHOrderResponse, error) {
-	uri := fmt.Sprintf("%v/orders/", baseURL)
-	resp, err := rh.get(uri)
-	if err != nil {
-		return nil, err
-	}
-	ret := map[string]interface{}{}
-	if err = json.Unmarshal(resp.Body(), &ret); err != nil {
-		return nil, err
-	}
-	orders := []RHOrderResponse{}
-	if
-}
+// func (rh *Robinhood) ListOrders(q RHOrderQuery) ([]RHOrderResponse, error) {
+// 	uri := fmt.Sprintf("%v/orders/", baseURL)
+// 	resp, err := rh.get(uri)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	ret := map[string]interface{}{}
+// 	if err = json.Unmarshal(resp.Body(), &ret); err != nil {
+// 		return nil, err
+// 	}
+// 	orders := []RHOrderResponse{}
+// }
